@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+# usage: bin/compile <build-dir> <cache-dir>
+
+set -eo pipefail
+
+mkdir -p "$1" "$2"
+build=$(cd "$1/" && pwd)
+cache=$(cd "$2/" && pwd)
+ver=${PERLVERSION:-5.18.2}
+file=${PERLFILE:-perl-$ver.tar.gz}
+url=${PERLURL:-http://www.cpan.org/src/5.0/$file}
+buildpack=$(dirname $(dirname $0))
+
+echo "BUILD $build"
+echo "CACHE $cache"
+echo "VER $ver"
+echo "FILE $file"
+echo "URL $url"
+echo "BUILDPACK $buildpack"
+
+if test -e $build/bin && ! test -d $build/bin
+then
+    echo >&2 " !     File bin exists and is not a directory."
+    exit 1
+fi
+
+# Download (if not cached) and install Perl
+if test -d $cache/perl
+then
+    echo " Using Perl $ver"
+else
+    rm -rf $cache/perl
+    mkdir -p $cache/perl
+    echo -n " Installing Perl $ver..."
+    ts=`date +%s`
+    curl -sO -vvv $url
+    tar -C $cache/perl -zxf $file --strip-components=1
+    rm -f $file
+    # Build Perl
+    cd $cache/perl
+    #mkdir -p $build/bin
+    ./Configure -des -Dprefix=$build
+    make install
+    te=`date +%s`
+    echo "  done in $(($te-$ts))s"
+fi
+
+# Set PATH
+PATH=$build/bin:$PATH
+
+# Install dancer and YAML from CPAN
+echo -n " Installing dancer and dependencies..."
+ts=`date +%s`
+cd $build
+curl -L http://cpanmin.us | perl - Dancer
+curl -L http://cpanmin.us | perl - YAML
+te=`date +%s`
+echo "  done in $(($te-$ts))s"
+
+rm -rf $build/.cf
+
+mkdir -p $build/.profile.d
+echo 'export PATH=$PATH:$HOME/bin' > $build/.profile.d/dancer.sh
