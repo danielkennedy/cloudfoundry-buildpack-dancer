@@ -1,63 +1,40 @@
 #!/usr/bin/env bash
 # usage: bin/compile <build-dir> <cache-dir>
+BUILD=$(cd "$1/" && pwd)
+CACHE=$(cd "$2/" && pwd)
 
-set -eo pipefail
+# Our list of downloads
+declare -a DOWNLOADS=( $CACHE/perl-5.18.2.tar.gz dancer? yaml?)
 
-mkdir -p "$1" "$2"
-build=$(cd "$1/" && pwd)
-cache=$(cd "$2/" && pwd)
-ver=${PERLVERSION:-5.18.2}
-file=${PERLFILE:-perl-$ver.tar.gz}
-url=${PERLURL:-http://www.cpan.org/src/5.0/$file}
-buildpack=$(dirname $(dirname $0))
+# Our list of eventually necessary dependency files
+declare -a EXECUTABLES=( perl dancer.pm yaml.pm )
 
-echo "BUILD $build"
-echo "CACHE $cache"
-echo "VER $ver"
-echo "FILE $file"
-echo "URL $url"
-echo "BUILDPACK $buildpack"
-
-if test -e $build/bin && ! test -d $build/bin
+for i in $CACHE $CACHE/perl $CACHE/perl/buildback
+do
+  if [ ! -d $i ]
+  then
+    mkdir -p $CACHE
+  fi
+done
+if [ ! -f $CACHE/perl-5.18.2.tar.gz ]
 then
-    echo >&2 " !     File bin exists and is not a directory."
-    exit 1
+  curl -O --progress-bar http://www.cpan.org/src/5.0/
 fi
-
-# Download (if not cached) and install Perl
-if test -d $cache/perl
+if [ ! -x $CACHE/perl/Configure ]
 then
-    echo " Using Perl $ver"
-else
-    rm -rf $cache/perl
-    mkdir -p $cache/perl
-    echo -n " Installing Perl $ver..."
-    ts=`date +%s`
-    curl -sO -vvv $url
-    tar -C $cache/perl -zxf $file --strip-components=1
-    rm -f $file
-    # Build Perl
-    cd $cache/perl
-    #mkdir -p $build/bin
-    ./Configure -des -Dprefix=$build
-    make install
-    te=`date +%s`
-    echo "  done in $(($te-$ts))s"
+  cd $CACHE && tar -C $CACHE/perl -zxf perl-5.18.2.tar.gz --strip-components=1
 fi
-
-# Set PATH
-PATH=$build/bin:$PATH
-
-# Install dancer and YAML from CPAN
-echo -n " Installing dancer and dependencies..."
-ts=`date +%s`
-cd $build
+if [ ! -d $CACHE/perl/.config ]
+then
+  cd $CACHE/perl && ./Configure -des -Dprefix=$CACHE/perl/buildpack
+fi
+if [ ! -d $CACHE/perl/buildpack/bin ] || [ ! -x $CACHE/perl/buildpack/bin/perl ]
+then
+  cd $CACHE/perl && make install
+fi
+### At this point, perl and all of its libs are found in $CACHE/perl/buildpack
+cd $CACHE/perl/buildpack
+export PATH=$CACHE/perl/buildback/bin:$PATH
 curl -L http://cpanmin.us | perl - Dancer
-curl -L http://cpanmin.us | perl - YAML
-te=`date +%s`
-echo "  done in $(($te-$ts))s"
+### At this point dancer (25 modules, really) are *somewhere*
 
-rm -rf $build/.cf
-
-mkdir -p $build/.profile.d
-echo 'export PATH=$PATH:$HOME/bin' > $build/.profile.d/dancer.sh
