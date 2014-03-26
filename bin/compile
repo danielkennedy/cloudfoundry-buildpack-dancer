@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
 # usage: bin/compile <build-dir> <cache-dir>
-BUILD=$1
-CACHE=$2
 
-# Our list of downloads
-declare -a DOWNLOADS=( $CACHE/perl-5.18.2.tar.gz )
+# Fail fast, fail hard
+set -eo pipefail
 
-# Our list of eventually necessary dependency files
-declare -a DEPENDENCIES=( $CACHE/perl/buildpack/bin/perl dancer.pm yaml.pm )
+# Directories
+BUILD_DIR=$1
+CACHE_DIR=$2
+DOWNLOADS_DIR=$CACHE_DIR/downloads
+WORKSPACE_DIR=$CACHE_DIR/workspace
+RUNTIME_DIR=$CACHE_DIR/runtime
 
-for i in $CACHE $CACHE/perl $CACHE/perl/buildpack
+# Files
+TARBALL=perl-5.18.2.tar.gz
+
+for i in $CACHE_DIR $DOWNLOADS_DIR $WORKSPACE_DIR $RUNTIME_DIR
 do
   if [ ! -d $i ]
   then
@@ -18,53 +23,49 @@ do
   fi
 done
 
-### Download perl tarball, if necessary
-if [ ! -f $CACHE/perl-5.18.2.tar.gz ]
-then
-  cd $CACHE && curl -O --progress-bar http://www.cpan.org/src/5.0/perl-5.18.2.tar.gz
-fi
-
-### Unpack perl tarball, if necessary
-if [ ! -x $CACHE/perl/Configure ]
-then
-  cd $CACHE && tar -C $CACHE/perl -zxf perl-5.18.2.tar.gz --strip-components=1
-fi
-
-### Prepare perl for building, if necessary
-if [ ! -d $CACHE/perl/.config ]
-then
-  cd $CACHE/perl && ./Configure -des -Dprefix=$CACHE/perl/buildpack
-fi
-
 ### Build and install perl, if necessary
-if [ ! -d $CACHE/perl/buildpack/bin ] || [ ! -x $CACHE/perl/buildpack/bin/perl ]
+if [ ! -d $RUNTIME_DIR/bin ] || [ ! -x $RUNTIME_DIR/bin/perl ]
 then
-  cd $CACHE/perl && make install
+  ### Download perl tarball, if necessary
+  if [ ! -f $DOWNLOADS_DIR/$TARBALL ]
+  then
+    cd $DOWNLOADS_DIR && curl -O --progress-bar http://www.cpan.org/src/5.0/$TARBALL
+  fi
+  cd $WORKSPACE_DIR && tar -C $WORKSPACE_DIR -zxf $TARBALL --strip-components=1
+  cd $WORKSPACE_DIR && ./Configure -des -Dprefix=$RUNTIME_DIR
+  cd $WORKSPACE_DIR && make install
 fi
+
 
 ### Verify whether perl is functional
-export PATH=$CACHE/perl/buildpack/bin:$PATH
-[ $(which perl) = $CACHE/perl/buildpack/bin/perl ] || exit 1
+export PATH=$RUNTIME_DIR/bin:$PATH
+[ $(which perl) = $RUNTIME_DIR/bin/perl ] || exit 1
 [ $(perl -e 'print "yes"') = "yes" ] || exit 1
 
 ### Install Dancer, if necessary
-if [ ! -d $CACHE/perl/buildpack/lib/site_perl/5.18.2/Dancer ]
+if [ ! -d $RUNTIME_DIR/lib/site_perl/5.18.2/Dancer ]
 then
-  export PERL5LIB=$CACHE/perl/buildpack/lib/site_perl/5.18.2
-  cd $CACHE/perl/buildpack &&curl -L http://cpanmin.us | perl - Dancer
+  export PERL5LIB=$RUNTIME_DIR/lib/site_perl/5.18.2
+  cd $RUNTIME_DIR && curl -L http://cpanmin.us | perl - Dancer
 fi
 
 ### Install YAML, if necessary
-if [ ! -d $CACHE/perl/buildpack/lib/site_perl/5.18.2/YAML ]
+if [ ! -d $RUNTIME_DIR/lib/site_perl/5.18.2/YAML ]
 then
-  export PERL5LIB=$CACHE/perl/buildpack/lib/site_perl/5.18.2
-  cd $CACHE/perl/buildpack &&curl -L http://cpanmin.us | perl - YAML
+  export PERL5LIB=$RUNTIME_DIR/lib/site_perl/5.18.2
+  cd $RUNTIME_DIR &&curl -L http://cpanmin.us | perl - YAML
 fi
 
 ### Setup the build directory as needed
-# The app, located in $BUILD, needs to be able to resolve its dependencies for perl and dancer. How do I do that?
-mkdir -p $BUILD/.cf
-cp -ri $CACHE/perl/buildpack/* $BUILD/.cf/
-mkdir -p $BUILD/.profile.d
-#echo 'export PATH='$BUILD/.cf/bin':$PATH' > $BUILD/.profile.d/dancer.sh
-echo 'export PATH=$PATH:$HOME/.cf/bin' > $BUILD/.profile.d/dancer.sh
+# The app, located in $BUILD_DIR, needs to be able to resolve its dependencies for perl and dancer. How do I do that?
+echo "CACHE_DIR:"
+ls -alR $CACHE_DIR
+echo "BUILD_DIR:"
+ls -alR $BUILD_DIR
+$RUNTIME_DIR/bin/perl -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
+
+mkdir -p $BUILD_DIR/.cf
+cp -ri $RUNTIME_DIR/* $BUILD_DIR/.cf/
+mkdir -p $BUILD_DIR/.profile.d
+#echo 'export PATH='$BUILD_DIR/.cf/bin':$PATH' > $BUILD_DIR/.profile.d/dancer.sh
+echo 'export PATH=$PATH:$HOME/.cf/bin' > $BUILD_DIR/.profile.d/dancer.sh
