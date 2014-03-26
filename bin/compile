@@ -66,4 +66,5 @@ fi
 mkdir -p $BUILD/.cf
 cp -ri $CACHE/perl/buildpack/* $BUILD/.cf/
 mkdir -p $BUILD/.profile.d
-echo 'export PATH='$BUILD/.cf/bin':$PATH' > $BUILD/.profile.d/dancer.sh
+#echo 'export PATH='$BUILD/.cf/bin':$PATH' > $BUILD/.profile.d/dancer.sh
+echo 'export PATH=$PATH:$HOME/.cf/bin' > $build/.profile.d/dancer.sh
