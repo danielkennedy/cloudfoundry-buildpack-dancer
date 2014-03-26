@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
+BUILD=$1
 
 cat << EOF
 ---
 addons:
 default_process_types:
-  web: echo "USING ./.cf/bin/perl" && ./.cf/bin/perl bin/app.pl
+  web: $BUILD/.cf/bin/perl $BUILD/bin/app.pl
 EOF
