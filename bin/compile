@@ -1,40 +1,67 @@
 #!/usr/bin/env bash
 # usage: bin/compile <build-dir> <cache-dir>
-BUILD=$(cd "$1/" && pwd)
-CACHE=$(cd "$2/" && pwd)
+BUILD=$1
+CACHE=$2
 
 # Our list of downloads
-declare -a DOWNLOADS=( $CACHE/perl-5.18.2.tar.gz dancer? yaml?)
+declare -a DOWNLOADS=( $CACHE/perl-5.18.2.tar.gz )
 
 # Our list of eventually necessary dependency files
-declare -a EXECUTABLES=( perl dancer.pm yaml.pm )
+declare -a DEPENDENCIES=( $CACHE/perl/buildpack/bin/perl dancer.pm yaml.pm )
 
-for i in $CACHE $CACHE/perl $CACHE/perl/buildback
+for i in $CACHE $CACHE/perl $CACHE/perl/buildpack
 do
   if [ ! -d $i ]
   then
-    mkdir -p $CACHE
+    echo "Making directory: $i"
+    mkdir -p $i
   fi
 done
+
+### Download perl tarball, if necessary
 if [ ! -f $CACHE/perl-5.18.2.tar.gz ]
 then
-  curl -O --progress-bar http://www.cpan.org/src/5.0/
+  cd $CACHE && curl -O --progress-bar http://www.cpan.org/src/5.0/perl-5.18.2.tar.gz
 fi
+
+### Unpack perl tarball, if necessary
 if [ ! -x $CACHE/perl/Configure ]
 then
   cd $CACHE && tar -C $CACHE/perl -zxf perl-5.18.2.tar.gz --strip-components=1
 fi
+
+### Prepare perl for building, if necessary
 if [ ! -d $CACHE/perl/.config ]
 then
   cd $CACHE/perl && ./Configure -des -Dprefix=$CACHE/perl/buildpack
 fi
+
+### Build and install perl, if necessary
 if [ ! -d $CACHE/perl/buildpack/bin ] || [ ! -x $CACHE/perl/buildpack/bin/perl ]
 then
   cd $CACHE/perl && make install
 fi
-### At this point, perl and all of its libs are found in $CACHE/perl/buildpack
-cd $CACHE/perl/buildpack
-export PATH=$CACHE/perl/buildback/bin:$PATH
-curl -L http://cpanmin.us | perl - Dancer
-### At this point dancer (25 modules, really) are *somewhere*
 
+### Verify whether perl is functional
+export PATH=$CACHE/perl/buildpack/bin:$PATH
+[ $(which perl) = $CACHE/perl/buildpack/bin/perl ] || exit 1
+[ $(perl -e 'print "yes"') = "yes" ] || exit 1
+
+### Install Dancer, if necessary
+if [ ! -d $CACHE/perl/buildpack/lib/site_perl/5.18.2/Dancer ]
+then
+  export PERL5LIB=$CACHE/perl/buildpack/lib/site_perl/5.18.2
+  cd $CACHE/perl/buildpack &&curl -L http://cpanmin.us | perl - Dancer
+fi
+
+### Install YAML, if necessary
+if [ ! -d $CACHE/perl/buildpack/lib/site_perl/5.18.2/YAML ]
+then
+  export PERL5LIB=$CACHE/perl/buildpack/lib/site_perl/5.18.2
+  cd $CACHE/perl/buildpack &&curl -L http://cpanmin.us | perl - YAML
+fi
+
+### Setup the build directory as needed
+# The app, located in $BUILD, needs to be able to resolve its dependencies for perl and dancer. How do I do that?
+mkdir -p $BUILD/.profile.d
+echo 'export PATH='$PATH > $BUILD/.profile.d/dancer.sh
