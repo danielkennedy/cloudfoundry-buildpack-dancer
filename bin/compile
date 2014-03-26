@@ -31,7 +31,7 @@ then
   then
     cd $DOWNLOADS_DIR && curl -O --progress-bar http://www.cpan.org/src/5.0/$TARBALL
   fi
-  cd $WORKSPACE_DIR && tar -C $WORKSPACE_DIR -zxf $TARBALL --strip-components=1
+  cd $DOWNLOADS_DIR && tar -C $WORKSPACE_DIR -zxf $TARBALL --strip-components=1
   cd $WORKSPACE_DIR && ./Configure -des -Dprefix=$RUNTIME_DIR
   cd $WORKSPACE_DIR && make install
 fi
