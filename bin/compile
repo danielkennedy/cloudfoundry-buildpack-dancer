@@ -63,5 +63,7 @@ fi
 
 ### Setup the build directory as needed
 # The app, located in $BUILD, needs to be able to resolve its dependencies for perl and dancer. How do I do that?
+mkdir -p $BUILD/.cf
+cp -ri $CACHE/perl/buildpack/* $BUILD/.cf/
 mkdir -p $BUILD/.profile.d
-echo 'export PATH='$PATH > $BUILD/.profile.d/dancer.sh
+echo 'export PATH='$BUILD/.cf/bin':$PATH' > $BUILD/.profile.d/dancer.sh

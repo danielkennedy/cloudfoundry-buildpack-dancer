@@ -5,5 +5,5 @@ cat << EOF
 ---
 addons:
 default_process_types:
-  web: perl bin/app.pl
+  web: source .profile.d/dancer.sh && perl bin/app.pl
 EOF
