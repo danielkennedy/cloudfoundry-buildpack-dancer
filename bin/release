@@ -2,11 +2,10 @@
 # bin/release <build-dir>
 BUILD=$1
 
-#cat << EOF
-#---
-#addons:
-#default_process_types:
-#  web: $BUILD/.cf/bin/perl $BUILD/bin/app.pl
-#EOF
+cat << EOF
+---
+addons:
+default_process_types:
+  web: $BUILD/.cf/bin/perl $BUILD/bin/app.pl
+EOF
 
-echo "--- {}"
