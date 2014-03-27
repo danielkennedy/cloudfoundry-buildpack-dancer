@@ -68,4 +68,9 @@ $VENDOR_DIR/bin/perl -I $VENDOR_DIR/lib/site_perl/5.18.2 -e 'print "THIS IS A ME
 mkdir -p $BUILD_DIR/.profile.d
 echo "export PATH=\"\$HOME/vendor/bin:\$HOME/bin:\$PATH\";" > $BUILD_DIR/.profile.d/dancer.sh
 
-echo "Done v6"
+ls -al $BUILD_DIR
+cat $BUILD_DIR/.profile.d/dancer.sh
+source $BUILD_DIR/.profile.d/dancer.sh && which perl
+which perl
+perl -I $VENDOR_DIR/lib/site_perl/5.18.2 $BUILD_DIR/bin/app.pl
+echo "Done v8"
