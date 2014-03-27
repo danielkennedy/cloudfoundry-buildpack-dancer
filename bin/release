@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
-#which perl
+#web: perl bin/app.pl
 BUILD=$1
 
 cat << EOF
 addons:
 default_process_types:
-  web: perl bin/app.pl
+  web: perl -e 'print "THIS IS A MESSAGE FROM PERL: @INC $] $ENV{PWD}\n"; while (1) {print "running...";sleep 3;}'
 EOF
