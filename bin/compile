@@ -68,4 +68,4 @@ $VENDOR_DIR/bin/perl -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
 mkdir -p $BUILD_DIR/.profile.d
 echo "export PATH=\"\$HOME/vendor/bin:\$HOME/bin:\$PATH\";" > $BUILD_DIR/.profile.d/dancer.sh
 
-echo "Done v4"
+echo "Done v5"
