@@ -8,5 +8,5 @@ addons:
 config_vars:
   PATH: vendor/bin:/usr/local/bin:/usr/bin:/bin
 default_process_types:
-  web: perl -I $1/lib/site_perl/5.18.2 bin/app.pl
+  web: $1/vendor/bin/perl -I $1/lib/site_perl/5.18.2 $1/bin/app.pl
 EOF
