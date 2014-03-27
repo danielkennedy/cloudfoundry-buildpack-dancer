@@ -34,6 +34,8 @@ then
   cd $DOWNLOADS_DIR && tar -C $WORKSPACE_DIR -zxf $TARBALL --strip-components=1
   cd $WORKSPACE_DIR && ./Configure -des -Dprefix=$RUNTIME_DIR
   cd $WORKSPACE_DIR && make install
+  rm -rf $WORKSPACE_DIR
+  rm -rf $DOWNLOADS_DIR
 fi
 
 
@@ -58,8 +60,8 @@ fi
 
 ### Setup the build directory as needed
 # The app, located in $BUILD_DIR, needs to be able to resolve its dependencies for perl and dancer. How do I do that?
-echo "CACHE_DIR:"
-ls -alR $CACHE_DIR
+echo "RUNTIME_DIR:"
+ls -alR $RUNTIME_DIR
 echo "BUILD_DIR:"
 ls -alR $BUILD_DIR
 $RUNTIME_DIR/bin/perl -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
