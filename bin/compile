@@ -70,5 +70,5 @@ mkdir -p $BUILD_DIR/vendor
 cp -ri $RUNTIME_DIR/* $BUILD_DIR/vendor/
 
 mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"\$HOME/vendor/bin:\$HOME/bin:\$PATH\";" > $build_dir/.profile.d/dancer.sh
+echo "export PATH=\"\$HOME/vendor/bin:\$HOME/bin:\$PATH\";" > $BUILD_DIR/.profile.d/dancer.sh
 
