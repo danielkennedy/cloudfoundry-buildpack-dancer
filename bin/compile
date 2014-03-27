@@ -72,5 +72,5 @@ ls -al $BUILD_DIR
 cat $BUILD_DIR/.profile.d/dancer.sh
 source $BUILD_DIR/.profile.d/dancer.sh && which perl
 which perl
-cd $BUILD_DIR && vendor/bin/perl -I vendor/lib/site_perl/5.18.2 bin/app.pl
-echo "Done v10"
+#cd $BUILD_DIR && vendor/bin/perl -I vendor/lib/site_perl/5.18.2 bin/app.pl
+echo "Done v11"

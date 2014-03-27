@@ -3,8 +3,6 @@
 #web: perl bin/app.pl
 
 cat << EOF
----
-addons:
 config_vars:
   PATH: vendor/bin:/usr/local/bin:/usr/bin:/bin
 default_process_types:
