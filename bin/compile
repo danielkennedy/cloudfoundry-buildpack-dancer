@@ -31,6 +31,7 @@ then
   if [ ! -f $DOWNLOADS_DIR/$TARBALL ]
   then
     if [ ! -d $DOWNLOADS_DIR ]
+    then
       mkdir -p $DOWNLOADS_DIR
     fi
     cd $DOWNLOADS_DIR && curl -O --progress-bar http://www.cpan.org/src/5.0/$TARBALL
