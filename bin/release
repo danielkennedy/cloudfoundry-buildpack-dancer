@@ -1,10 +1,6 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
-#web: perl bin/app.pl
-
 cat << EOF
-config_vars:
-  PATH: vendor/bin:/usr/local/bin:/usr/bin:/bin
-default_process_types:
-  web: vendor/bin/perl -I vendor/lib/site_perl/5.18.2 bin/app.pl
+addons: []
+default_process_types: {}
 EOF
