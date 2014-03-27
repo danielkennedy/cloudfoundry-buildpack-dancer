@@ -61,13 +61,14 @@ fi
 ### Setup the build directory as needed
 # The app, located in $BUILD_DIR, needs to be able to resolve its dependencies for perl and dancer. How do I do that?
 echo "RUNTIME_DIR:"
-ls -alR $RUNTIME_DIR
+ls -al $RUNTIME_DIR
 echo "BUILD_DIR:"
-ls -alR $BUILD_DIR
+ls -al $BUILD_DIR
 $RUNTIME_DIR/bin/perl -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
 
-mkdir -p $BUILD_DIR/.cf
-cp -ri $RUNTIME_DIR/* $BUILD_DIR/.cf/
+mkdir -p $BUILD_DIR/vendor
+cp -ri $RUNTIME_DIR/* $BUILD_DIR/vendor/
+
 mkdir -p $BUILD_DIR/.profile.d
-#echo 'export PATH='$BUILD_DIR/.cf/bin':$PATH' > $BUILD_DIR/.profile.d/dancer.sh
-echo 'export PATH=$PATH:$HOME/.cf/bin' > $BUILD_DIR/.profile.d/dancer.sh
+echo "export PATH=\"\$HOME/vendor/bin:\$HOME/bin:\$PATH\";" > $build_dir/.profile.d/dancer.sh
+
