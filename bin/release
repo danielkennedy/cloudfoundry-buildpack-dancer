@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
+#perl bin/app.pl
 BUILD=$1
 
 cat << EOF
 addons:
 default_process_types:
-  web: perl bin/app.pl
+  web: which perl
 EOF
