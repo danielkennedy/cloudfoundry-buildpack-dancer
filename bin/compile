@@ -56,16 +56,16 @@ echo "FIND Dancer (runtime):" `find $RUNTIME -name Dancer`
 echo "FIND YAML (runtime):" `find $RUNTIME -name YAML`
 
 ### Install Dancer, if necessary
-if [ ! -d $RUNTIME_DIR/lib/site_perl/5.18.2/Dancer ]
+if [ ! -d $RUNTIME_DIR/lib/perl5/site_perl/5.18.2/Dancer ]
 then
-  export PERL5LIB=$RUNTIME_DIR/lib/site_perl/5.18.2
+  export PERL5LIB=$RUNTIME_DIR/lib/perl5/site_perl/5.18.2
   cd $RUNTIME_DIR && curl -L http://cpanmin.us | $PERL - Dancer
 fi
 
 ### Install YAML, if necessary
-if [ ! -d $RUNTIME_DIR/lib/site_perl/5.18.2/YAML ]
+if [ ! -d $RUNTIME_DIR/lib/perl5/site_perl/5.18.2/YAML ]
 then
-  export PERL5LIB=$RUNTIME_DIR/lib/site_perl/5.18.2
+  export PERL5LIB=$RUNTIME_DIR/lib/perl5/site_perl/5.18.2
   cd $RUNTIME_DIR && curl -L http://cpanmin.us | $PERL - YAML
 fi
 
@@ -76,14 +76,14 @@ echo "FIND YAML (runtime):" `find $RUNTIME -name YAML`
 cp -ri $RUNTIME_DIR/* $VENDOR_DIR/
 #echo "VENDOR_DIR:"
 #ls -al $VENDOR_DIR
-$VENDOR_DIR/bin/perl -I $VENDOR_DIR/lib/site_perl/5.18.2 -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
+$VENDOR_DIR/bin/perl -I $VENDOR_DIR/lib/perl5/site_perl/5.18.2 -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
 
 mkdir -p $BUILD_DIR/.profile.d
 echo "export PATH=\$HOME/vendor/bin:\$HOME/bin:\$PATH" > $BUILD_DIR/.profile.d/dancer.sh
 
 # If Procfile is absent, try to create one using `npm start`
 if [ ! -e $BUILD_DIR/Procfile ]; then
-  echo "web: vendor/bin/perl -I vendor/lib/site_perl/5.18.2 bin/app.pl" > $BUILD_DIR/Procfile
+  echo "web: vendor/bin/perl -I vendor/lib/perl5/site_perl/5.18.2 bin/app.pl" > $BUILD_DIR/Procfile
 fi
 
 ls -al $BUILD_DIR
@@ -91,4 +91,4 @@ cat $BUILD_DIR/.profile.d/dancer.sh
 #source $BUILD_DIR/.profile.d/dancer.sh && which perl
 #which perl
 cd $BUILD_DIR && vendor/bin/perl -I vendor/lib/site_perl/5.18.2 -e 'foreach my $key (keys(%ENV)){print "$key = $ENV{$key}\n";}'
-echo "Done v16"
+echo "Done v17"
