@@ -41,22 +41,21 @@ fi
 
 
 ### Verify whether perl is functional
-export PATH=$RUNTIME_DIR/bin:$PATH
-[ $(which perl) = $RUNTIME_DIR/bin/perl ] || exit 1
-[ $(perl -e 'print "yes"') = "yes" ] || exit 1
+export PERL=$RUNTIME_DIR/bin/perl
+[ $($PERL -e 'print "yes"') = "yes" ] || exit 1
 
 ### Install Dancer, if necessary
 if [ ! -d $RUNTIME_DIR/lib/site_perl/5.18.2/Dancer ]
 then
   export PERL5LIB=$RUNTIME_DIR/lib/site_perl/5.18.2
-  cd $RUNTIME_DIR && curl -L http://cpanmin.us | perl - Dancer
+  cd $RUNTIME_DIR && curl -L http://cpanmin.us | $PERL - Dancer
 fi
 
 ### Install YAML, if necessary
 if [ ! -d $RUNTIME_DIR/lib/site_perl/5.18.2/YAML ]
 then
   export PERL5LIB=$RUNTIME_DIR/lib/site_perl/5.18.2
-  cd $RUNTIME_DIR && curl -L http://cpanmin.us | perl - YAML
+  cd $RUNTIME_DIR && curl -L http://cpanmin.us | $PERL - YAML
 fi
 
 ### Setup the build directory as needed
@@ -66,7 +65,7 @@ ls -al $VENDOR_DIR
 $VENDOR_DIR/bin/perl -I $VENDOR_DIR/lib/site_perl/5.18.2 -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
 
 mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\"\$HOME/vendor/bin:\$HOME/bin:\$PATH\";" > $BUILD_DIR/.profile.d/dancer.sh
+echo "export PATH=\$HOME/vendor/bin:\$HOME/bin:\$PATH" > $BUILD_DIR/.profile.d/dancer.sh
 
 # If Procfile is absent, try to create one using `npm start`
 if [ ! -e $BUILD_DIR/Procfile ]; then
@@ -78,4 +77,4 @@ cat $BUILD_DIR/.profile.d/dancer.sh
 source $BUILD_DIR/.profile.d/dancer.sh && which perl
 which perl
 #cd $BUILD_DIR && vendor/bin/perl -I vendor/lib/site_perl/5.18.2 bin/app.pl
-echo "Done v12"
+echo "Done v13"
