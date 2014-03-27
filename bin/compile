@@ -69,10 +69,13 @@ then
   cd $RUNTIME_DIR && curl -L http://cpanmin.us | $PERL - YAML
 fi
 
+echo "FIND Dancer (runtime):" `find $RUNTIME -name Dancer`
+echo "FIND YAML (runtime):" `find $RUNTIME -name YAML`
+
 ### Setup the build directory as needed
 cp -ri $RUNTIME_DIR/* $VENDOR_DIR/
-echo "VENDOR_DIR:"
-ls -al $VENDOR_DIR
+#echo "VENDOR_DIR:"
+#ls -al $VENDOR_DIR
 $VENDOR_DIR/bin/perl -I $VENDOR_DIR/lib/site_perl/5.18.2 -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
 
 mkdir -p $BUILD_DIR/.profile.d
@@ -85,7 +88,7 @@ fi
 
 ls -al $BUILD_DIR
 cat $BUILD_DIR/.profile.d/dancer.sh
-source $BUILD_DIR/.profile.d/dancer.sh && which perl
-which perl
+#source $BUILD_DIR/.profile.d/dancer.sh && which perl
+#which perl
 cd $BUILD_DIR && vendor/bin/perl -I vendor/lib/site_perl/5.18.2 -e 'foreach my $key (keys(%ENV)){print "$key = $ENV{$key}\n";}'
-echo "Done v15"
+echo "Done v16"
