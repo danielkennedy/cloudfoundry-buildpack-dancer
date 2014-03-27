@@ -87,8 +87,11 @@ if [ ! -e $BUILD_DIR/Procfile ]; then
 fi
 
 ls -al $BUILD_DIR
+echo "PROFILE:"
 cat $BUILD_DIR/.profile.d/dancer.sh
 #source $BUILD_DIR/.profile.d/dancer.sh && which perl
 #which perl
 cd $BUILD_DIR && vendor/bin/perl -I vendor/lib/site_perl/5.18.2 -e 'foreach my $key (keys(%ENV)){print "$key = $ENV{$key}\n";}'
+echo "PROFILE:"
+cat $BUILD_DIR/Procfile
 echo "Done v17"
