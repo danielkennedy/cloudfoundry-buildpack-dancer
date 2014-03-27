@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 #web: perl bin/app.pl
-BUILD=$1
 
 cat << EOF
+---
 addons:
+config_vars:
+  PATH: vendor/bin:/usr/local/bin:/usr/bin:/bin
 default_process_types:
-  web: perl -e 'while (1) {print "running...";sleep 3;}'
+  web: perl bin/app.pl
 EOF
