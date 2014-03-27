@@ -10,11 +10,12 @@ CACHE_DIR=$2
 DOWNLOADS_DIR=$CACHE_DIR/downloads
 WORKSPACE_DIR=$CACHE_DIR/workspace
 RUNTIME_DIR=$CACHE_DIR/runtime
+VENDOR_DIR=$BUILD_DIR/vendor
 
 # Files
 TARBALL=perl-5.18.2.tar.gz
 
-for i in $CACHE_DIR $DOWNLOADS_DIR $WORKSPACE_DIR $RUNTIME_DIR
+for i in $CACHE_DIR $DOWNLOADS_DIR $WORKSPACE_DIR $RUNTIME_DIR $VENDOR_DIR
 do
   if [ ! -d $i ]
   then
@@ -32,7 +33,7 @@ then
     cd $DOWNLOADS_DIR && curl -O --progress-bar http://www.cpan.org/src/5.0/$TARBALL
   fi
   cd $DOWNLOADS_DIR && tar -C $WORKSPACE_DIR -zxf $TARBALL --strip-components=1
-  cd $WORKSPACE_DIR && ./Configure -des -Dprefix=$RUNTIME_DIR
+  cd $WORKSPACE_DIR && ./Configure -des -Dprefix=$VENDOR_DIR
   cd $WORKSPACE_DIR && make install
   rm -rf $WORKSPACE_DIR
   rm -rf $DOWNLOADS_DIR
@@ -45,31 +46,28 @@ export PATH=$RUNTIME_DIR/bin:$PATH
 [ $(perl -e 'print "yes"') = "yes" ] || exit 1
 
 ### Install Dancer, if necessary
-if [ ! -d $RUNTIME_DIR/lib/site_perl/5.18.2/Dancer ]
+if [ ! -d $VENDOR_DIR/lib/site_perl/5.18.2/Dancer ]
 then
-  export PERL5LIB=$RUNTIME_DIR/lib/site_perl/5.18.2
-  cd $RUNTIME_DIR && curl -L http://cpanmin.us | perl - Dancer
+  export PERL5LIB=$VENDOR_DIR/lib/site_perl/5.18.2
+  cd $VENDOR_DIR && curl -L http://cpanmin.us | perl - Dancer
 fi
 
 ### Install YAML, if necessary
-if [ ! -d $RUNTIME_DIR/lib/site_perl/5.18.2/YAML ]
+if [ ! -d $VENDOR_DIR/lib/site_perl/5.18.2/YAML ]
 then
-  export PERL5LIB=$RUNTIME_DIR/lib/site_perl/5.18.2
-  cd $RUNTIME_DIR &&curl -L http://cpanmin.us | perl - YAML
+  export PERL5LIB=$VENDOR_DIR/lib/site_perl/5.18.2
+  cd $VENDOR_DIR && curl -L http://cpanmin.us | perl - YAML
 fi
 
 ### Setup the build directory as needed
 # The app, located in $BUILD_DIR, needs to be able to resolve its dependencies for perl and dancer. How do I do that?
-echo "RUNTIME_DIR:"
-ls -al $RUNTIME_DIR
-echo "BUILD_DIR:"
-ls -al $BUILD_DIR
-$RUNTIME_DIR/bin/perl -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
+echo "VENDOR_DIR:"
+ls -al $VENDOR_DIR
+$VENDOR_DIR/bin/perl -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
 
-mkdir -p $BUILD_DIR/vendor
-cp -ri $RUNTIME_DIR/* $BUILD_DIR/vendor/
+cp -ri $RUNTIME_DIR/* $VENDOR_DIR/
 
 mkdir -p $BUILD_DIR/.profile.d
 echo "export PATH=\"\$HOME/vendor/bin:\$HOME/bin:\$PATH\";" > $BUILD_DIR/.profile.d/dancer.sh
 
-echo "Done v2"
+echo "Done v3"
