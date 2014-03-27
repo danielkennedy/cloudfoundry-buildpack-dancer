@@ -68,9 +68,14 @@ $VENDOR_DIR/bin/perl -I $VENDOR_DIR/lib/site_perl/5.18.2 -e 'print "THIS IS A ME
 mkdir -p $BUILD_DIR/.profile.d
 echo "export PATH=\"\$HOME/vendor/bin:\$HOME/bin:\$PATH\";" > $BUILD_DIR/.profile.d/dancer.sh
 
+# If Procfile is absent, try to create one using `npm start`
+if [ ! -e $BUILD_DIR/Procfile ]; then
+  echo "web: vendor/bin/perl -I vendor/lib/site_perl/5.18.2 bin/app.pl" > $BUILD_DIR/Procfile
+fi
+
 ls -al $BUILD_DIR
 cat $BUILD_DIR/.profile.d/dancer.sh
 source $BUILD_DIR/.profile.d/dancer.sh && which perl
 which perl
 #cd $BUILD_DIR && vendor/bin/perl -I vendor/lib/site_perl/5.18.2 bin/app.pl
-echo "Done v11"
+echo "Done v12"
