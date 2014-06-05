@@ -7,91 +7,15 @@ set -eo pipefail
 # Directories
 BUILD_DIR=$1
 CACHE_DIR=$2
-DOWNLOADS_DIR=$CACHE_DIR/downloads
-WORKSPACE_DIR=$CACHE_DIR/workspace
-RUNTIME_DIR=$CACHE_DIR/runtime
-VENDOR_DIR=$BUILD_DIR/vendor
 
-# Files
-TARBALL=perl-5.18.2.tar.gz
+# Is perl available?
+which perl || apt-get install perl
 
-for i in $RUNTIME_DIR $VENDOR_DIR
-do
-  if [ ! -d $i ]
-  then
-    echo "Making directory: $i"
-    mkdir -p $i
-  fi
-done
+# Is dancer available?
+which curl || apt-get install curl
+perl -MDancer -e 1 || curl -L http://cpanmin.us | perl - Dancer
 
-### Build and install perl, if necessary
-if [ ! -d $RUNTIME_DIR/bin ] || [ ! -x $RUNTIME_DIR/bin/perl ]
-then
-  ### Download perl tarball, if necessary
-  if [ ! -f $DOWNLOADS_DIR/$TARBALL ]
-  then
-    if [ ! -d $DOWNLOADS_DIR ]
-    then
-      mkdir -p $DOWNLOADS_DIR
-    fi
-    cd $DOWNLOADS_DIR && curl -O --progress-bar http://www.cpan.org/src/5.0/$TARBALL
-  fi
-  if [ ! -d $WORKSPACE_DIR ]
-  then
-    mkdir -p $WORKSPACE_DIR
-  fi
-  cd $DOWNLOADS_DIR && tar -C $WORKSPACE_DIR -zxf $TARBALL --strip-components=1
-  cd $WORKSPACE_DIR && ./Configure -des -Dprefix=$RUNTIME_DIR
-  cd $WORKSPACE_DIR && make install
-  rm -rf $WORKSPACE_DIR
-  rm -rf $DOWNLOADS_DIR
-fi
+# Is yaml available?
+which curl || apt-get install curl
+perl -MYAML -e 1 || curl -L http://cpanmin.us | perl - YAML
 
-### Verify whether perl is functional
-export PERL=$RUNTIME_DIR/bin/perl
-[ $($PERL -e 'print "yes"') = "yes" ] || exit 1
-echo "PERL: $PERL"
-$PERL -e 'print "@INC\n";'
-echo "FIND Dancer (runtime):" `find $RUNTIME -name Dancer`
-echo "FIND YAML (runtime):" `find $RUNTIME -name YAML`
-
-### Install Dancer, if necessary
-if [ ! -d $RUNTIME_DIR/lib/perl5/site_perl/5.18.2/Dancer ]
-then
-  export PERL5LIB=$RUNTIME_DIR/lib/perl5/site_perl/5.18.2
-  cd $RUNTIME_DIR && curl -L http://cpanmin.us | $PERL - Dancer
-fi
-
-### Install YAML, if necessary
-if [ ! -d $RUNTIME_DIR/lib/perl5/site_perl/5.18.2/YAML ]
-then
-  export PERL5LIB=$RUNTIME_DIR/lib/perl5/site_perl/5.18.2
-  cd $RUNTIME_DIR && curl -L http://cpanmin.us | $PERL - YAML
-fi
-
-echo "FIND Dancer (runtime):" `find $RUNTIME -name Dancer`
-echo "FIND YAML (runtime):" `find $RUNTIME -name YAML`
-
-### Setup the build directory as needed
-cp -ri $RUNTIME_DIR/* $VENDOR_DIR/
-#echo "VENDOR_DIR:"
-#ls -al $VENDOR_DIR
-$VENDOR_DIR/bin/perl -I $VENDOR_DIR/lib/perl5/site_perl/5.18.2 -e 'print "THIS IS A MESSAGE FROM PERL: @INC $]\n";'
-
-mkdir -p $BUILD_DIR/.profile.d
-echo "export PATH=\$HOME/vendor/bin:\$HOME/bin:\$PATH" > $BUILD_DIR/.profile.d/dancer.sh
-
-# If Procfile is absent, try to create one using `npm start`
-if [ ! -e $BUILD_DIR/Procfile ]; then
-  echo "web: vendor/bin/perl -I vendor/lib/perl5/site_perl/5.18.2 bin/app.pl" > $BUILD_DIR/Procfile
-fi
-
-ls -al $BUILD_DIR
-echo "PROFILE:"
-cat $BUILD_DIR/.profile.d/dancer.sh
-#source $BUILD_DIR/.profile.d/dancer.sh && which perl
-#which perl
-cd $BUILD_DIR && vendor/bin/perl -I vendor/lib/site_perl/5.18.2 -e 'foreach my $key (keys(%ENV)){print "$key = $ENV{$key}\n";}'
-echo "PROFILE:"
-cat $BUILD_DIR/Procfile
-echo "Done v17"
