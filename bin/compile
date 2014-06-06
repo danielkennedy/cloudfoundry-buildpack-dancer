@@ -8,6 +8,9 @@ set -eo pipefail
 BUILD_DIR=$1
 CACHE_DIR=$2
 
+echo "BUILD_DIR $BUILD_DIR"
+echo "CACHE_DIR $CACHE_DIR"
+
 # Is perl available?
 which perl || apt-get install perl
 
