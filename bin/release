@@ -5,5 +5,5 @@ BUILD_DIR=$1
 cat << EOF
 config_vars:
 default_process_types:
-  web: PERL5DIR=$BUILD_DIR/lib/perl5 $BUILD_DIR/bin/perl bin/app.pl
+  web: ./bin/app.pl
 EOF
