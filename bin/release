@@ -5,5 +5,5 @@ BUILD_DIR=$1
 cat << EOF
 config_vars:
 default_process_types:
-  web: ./bin/app.pl release
+  web: $BUILD_DIR/runtime/bin/perl ./bin/app.pl release
 EOF
