@@ -20,7 +20,7 @@ echo "CACHE_DIR $CACHE_DIR"
 if ! [ -f $TARBALL ]
 then
   which curl || apt-get install curl
-  curl -o $TARBALL -L $DOWNLOAD
+  curl -# -o $TARBALL -L $DOWNLOAD
 fi
 
 # Explode the tarball to BUILD_DIR
