@@ -42,8 +42,11 @@ fi
 mkdir -p $BUILD_DIR/.profile.d
 echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.profile.d/perl.sh
 echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.profile.d/perl.sh
+echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.startup
+echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.startup
+chmod 777 $BUILD_DIR/.startup
 
-echo "v6"
+echo "v7"
 
 export PATH=$BUILD_DIR/runtime/bin:$PATH
 export PERL5DIR=$BUILD_DIR/runtime/lib/perl5
