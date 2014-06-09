@@ -3,5 +3,5 @@
 cat << EOF
 addons: []
 default_process_types:
-  web: PERL5LIB=$BUILD_DIR/runtime/lib/perl5 $BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl
+  web: echo PERL5LIB=$BUILD_DIR/runtime/lib/perl5 $BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl >&2
 EOF
