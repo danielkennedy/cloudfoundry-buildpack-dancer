@@ -45,4 +45,3 @@ echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.profile.d/per
 
 pwd
 ls -alrt $BUILD_DIR
-/usr/bin/env perl
