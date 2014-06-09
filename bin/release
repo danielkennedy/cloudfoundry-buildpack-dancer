@@ -2,16 +2,10 @@
 # bin/release <build-dir>
 BUILD_DIR=$1
 
-if ! [ -d .profile.d ]
-then
-  mkdir .profile.d
-fi
-
-echo 'PATH=$BUILD_DIR/bin:$PATH' > .profile.d/env.sh
-echo 'PERL5DIR=$BUILD_DIR/lib/perl5' >> .profile.d/env.sh
-
 cat << EOF
-addons:
+config_vars:
+  PATH: '$BUILD_DIR/bin:$PATH'
+  PERL5DIR: '$BUILD_DIR/lib/perl5'
 default_process_types:
   web: perl bin/app.pl
 EOF
