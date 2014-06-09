@@ -54,4 +54,4 @@ ls -alrt $BUILD_DIR/runtime
 find $BUILD_DIR/runtime -name perl
 which perl
 
-#$BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl compile
+PERL5DIR=$BUILD_DIR/runtime/lib/perl5 $BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl &
