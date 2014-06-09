@@ -35,7 +35,7 @@ fi
 # Build a Procfile, if necessary
 if [ ! -e $BUILD_DIR/Procfile ]
 then
-  echo "web: $BUILD_DIR/runtime/bin/perl ./bin/app.pl compile" > $BUILD_DIR/Procfile
+  echo "web: $BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl compile" > $BUILD_DIR/Procfile
 fi
 
 # Set the environment variables we need (PERL5DIR, PATH, <others?>)
@@ -43,4 +43,6 @@ mkdir -p $BUILD_DIR/.profile.d
 echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.profile.d/perl.sh
 echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.profile.d/perl.sh
 
-echo "v1"
+echo "v2"
+
+$BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl compile
