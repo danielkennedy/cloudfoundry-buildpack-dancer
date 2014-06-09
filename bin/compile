@@ -8,17 +8,29 @@ set -eo pipefail
 BUILD_DIR=$1
 CACHE_DIR=$2
 
+# Files
+TARBALL=$CACHE_DIR/perl-5.20.0.selfcontained.tar.gz
+DOWNLOAD=https://s3.amazonaws.com/af-uploads/buildpacks/perl-5.20.0.selfcontained.tar.gz
+PERL=$BUILD_DIR/bin/perl
+
 echo "BUILD_DIR $BUILD_DIR"
 echo "CACHE_DIR $CACHE_DIR"
 
-# Is perl available?
-which perl || apt-get install perl
+# Download the tarball to CACHE_DIR
+if ! [ -f $TARBALL ]
+then
+  which curl || apt-get install curl
+  curl -o $TARBALL -L $DOWNLOAD
+fi
 
-# Is dancer available?
-which curl || apt-get install curl
-perl -MDancer -e 1 || curl -L http://cpanmin.us | perl - Dancer
+# Explode the tarball to BUILD_DIR
+if ! [ -x $PERL ]
+then
+  which tar || apt-get install tar
+  tar -xvzf $TARBALL -C $BUILD_DIR
+fi
 
-# Is yaml available?
-which curl || apt-get install curl
-perl -MYAML -e 1 || curl -L http://cpanmin.us | perl - YAML
+# Set the environment variables we need (PERL5DIR, PATH, <others?>)
+export PATH=$BUILD_DIR/bin:$PATH
+export PERL5DIR=$BUILD_DIR/lib/perl5
 

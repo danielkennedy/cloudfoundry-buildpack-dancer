@@ -1,5 +1,15 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
+BUILD_DIR=$1
+
+if ! [ -d .profile.d ]
+then
+  mkdir .profile.d
+fi
+
+echo 'PATH=$BUILD_DIR/bin:$PATH' > .profile.d/env.sh
+echo 'PERL5DIR=$BUILD_DIR/lib/perl5' >> .profile.d/env.sh
+
 cat << EOF
 addons:
 default_process_types:
