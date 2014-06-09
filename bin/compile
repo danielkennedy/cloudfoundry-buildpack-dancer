@@ -43,3 +43,8 @@ mkdir -p $BUILD_DIR/.profile.d
 echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.profile.d/perl.sh
 echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.profile.d/perl.sh
 
+which tree || apt-get install tree
+
+ls -alrt $BUILD_DIR
+tree $BUILD_DIR
+
