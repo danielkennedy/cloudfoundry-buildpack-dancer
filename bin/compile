@@ -45,6 +45,8 @@ echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.profile.d/per
 
 echo "v6"
 
+export PATH=$BUILD_DIR/runtime/bin:$PATH
+export PERL5DIR=$BUILD_DIR/runtime/lib/perl5
 ls -alrt $BUILD_DIR/runtime
 find $BUILD_DIR/runtime -name perl
 which perl
