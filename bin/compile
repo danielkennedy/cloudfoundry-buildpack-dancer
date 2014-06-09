@@ -18,20 +18,27 @@ echo "BUILD_DIR $BUILD_DIR"
 echo "CACHE_DIR $CACHE_DIR"
 
 # Download the tarball to CACHE_DIR
-if ! [ -f $TARBALL ]
+if [ ! -e $TARBALL ]
 then
   which curl || apt-get install curl
   cd $CACHE_DIR && curl -sO $DOWNLOAD
 fi
 
 # Explode the tarball to BUILD_DIR
-if ! [ -x $PERL ]
+if [ ! -x $PERL ]
 then
   which tar || apt-get install tar
-  tar -xvzf $TARBALL -C $BUILD_DIR
+  tar -xvzf $TARBALL -C $BUILD_DIR/runtime
+fi
+
+# Build a Procfile, if necessary
+if [ ! -e $BUILD_DIR/Procfile ]
+then
+  echo "web: ./bin/app.pl" > $BUILD_DIR/Procfile
 fi
 
 # Set the environment variables we need (PERL5DIR, PATH, <others?>)
-export PATH=$BUILD_DIR/bin:$PATH
-export PERL5DIR=$BUILD_DIR/lib/perl5
+mkdir -p $BUILD_DIR/.profile.d
+echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.profile.d/perl.sh
+echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.profile.d/perl.sh
 
