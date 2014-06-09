@@ -43,8 +43,10 @@ mkdir -p $BUILD_DIR/.profile.d
 echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.profile.d/perl.sh
 echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.profile.d/perl.sh
 
-echo "v5"
+echo "v6"
 
 ls -alrt $BUILD_DIR/runtime
+find $BUILD_DIR/runtime -name perl
+which perl
 
 #$BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl compile
