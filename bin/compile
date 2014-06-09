@@ -28,6 +28,7 @@ fi
 if [ ! -x $PERL ]
 then
   which tar || apt-get install tar
+  mkdir -p $BUILD_DIR/runtime
   tar -xvzf $TARBALL -C $BUILD_DIR/runtime
 fi
 
