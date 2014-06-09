@@ -17,10 +17,10 @@ export PERL5LIB="$BUILD_DIR/local/lib/perl5"
 export PERL_CPANM_OPT="--quiet --notest -l $BUILD_DIR/local"
 
 # Is dancer available?
-perl -MDancer -e 1 || curl -L http://cpanmin.us | perl - Dancer
+perl -MDancer -e 1 || curl -sL http://cpanmin.us | perl - Dancer
 
 # Is yaml available?
-perl -MYAML -e 1 || curl -L http://cpanmin.us | perl - YAML
+perl -MYAML -e 1 || curl -sL http://cpanmin.us | perl - YAML
 
 if [ -d $BUILD_DIR/local ]
 then
