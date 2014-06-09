@@ -7,6 +7,7 @@ set -eo pipefail
 # Directories
 BUILD_DIR=$1
 CACHE_DIR=$2
+mkdir -p "$BUILD_DIR" "$CACHE_DIR"
 
 # Files
 TARBALL=$CACHE_DIR/perl-5.20.0.selfcontained.tar.gz
