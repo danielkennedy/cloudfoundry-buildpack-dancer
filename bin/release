@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 cat << EOF
-addons: []
+addons:
+config_vars:
+  PATH: local/bin:/usr/local/bin:/usr/bin:/bin
 default_process_types:
-  web: PERL5LIB=$BUILD_DIR/runtime/lib/perl5 $BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl
+  web: perl -Mlib=\$PWD/local/lib/perl5 bin/app.pl
 EOF

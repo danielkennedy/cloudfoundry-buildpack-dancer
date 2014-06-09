@@ -10,48 +10,45 @@ CACHE_DIR=$2
 mkdir -p "$BUILD_DIR" "$CACHE_DIR"
 
 # Files
-TARBALL=$CACHE_DIR/perl-5.20.0.selfcontained.tar.gz
-DOWNLOAD=https://s3.amazonaws.com/af-uploads/buildpacks/perl-5.20.0.selfcontained.tar.gz
-PERL=$BUILD_DIR/bin/perl
+which curl || apt-get install curl
+which perl || apt-get install perl
 
-echo "BUILD_DIR $BUILD_DIR"
-echo "CACHE_DIR $CACHE_DIR"
+export PERL5LIB="$BUILD_DIR/local/lib/perl5"
+export PERL_CPANM_OPT="--quiet --notest -l $BUILD_DIR/local"
 
-# Download the tarball to CACHE_DIR
-if [ ! -e $TARBALL ]
+# Is dancer available?
+perl -MDancer -e 1 || curl -L http://cpanmin.us | perl - Dancer
+
+# Is yaml available?
+perl -MYAML -e 1 || curl -L http://cpanmin.us | perl - YAML
+
+if [ -d $BUILD_DIR/local ]
 then
-  which curl || apt-get install curl
-  cd $CACHE_DIR && curl -sO $DOWNLOAD
-fi
-
-# Explode the tarball to BUILD_DIR
-if [ ! -x $PERL ]
-then
-  which tar || apt-get install tar
-  mkdir -p $BUILD_DIR/runtime
-  tar -xvzf $TARBALL -C $BUILD_DIR/runtime
+  rm -rf $CACHE_DIR/local
+  mkdir -p $CACHE_DIR
+  cp -a $BUILD_DIR/local $CACHE_DIR/local
 fi
 
 # Build a Procfile, if necessary
-if [ ! -e $BUILD_DIR/Procfile ]
-then
-  echo "web: PERL5DIR=$BUILD_DIR/runtime/lib/perl5 $BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl" > $BUILD_DIR/Procfile
-fi
-
-# Set the environment variables we need (PERL5DIR, PATH, <others?>)
-mkdir -p $BUILD_DIR/.profile.d
-echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.profile.d/perl.sh
-echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.profile.d/perl.sh
-echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.startup
-echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.startup
-chmod 777 $BUILD_DIR/.startup
-
-echo "v7"
-
-export PATH=$BUILD_DIR/runtime/bin:$PATH
-export PERL5DIR=$BUILD_DIR/runtime/lib/perl5
-ls -alrt $BUILD_DIR/runtime
-find $BUILD_DIR/runtime -name perl
-which perl
-
-PERL5DIR=$BUILD_DIR/runtime/lib/perl5 $BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl &
+#if [ ! -e $BUILD_DIR/Procfile ]
+#then
+#  echo "web: PERL5DIR=$BUILD_DIR/runtime/lib/perl5 $BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl" > $BUILD_DIR/Procfile
+#fi
+#
+## Set the environment variables we need (PERL5DIR, PATH, <others?>)
+#mkdir -p $BUILD_DIR/.profile.d
+#echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.profile.d/perl.sh
+#echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.profile.d/perl.sh
+#echo 'export PATH=$BUILD_DIR/runtime/bin:$PATH' > $BUILD_DIR/.startup
+#echo 'export PERL5DIR=$BUILD_DIR/runtime/lib/perl5' >> $BUILD_DIR/.startup
+#chmod 777 $BUILD_DIR/.startup
+#
+#echo "v7"
+#
+#export PATH=$BUILD_DIR/runtime/bin:$PATH
+#export PERL5DIR=$BUILD_DIR/runtime/lib/perl5
+#ls -alrt $BUILD_DIR/runtime
+#find $BUILD_DIR/runtime -name perl
+#which perl
+#
+#PERL5DIR=$BUILD_DIR/runtime/lib/perl5 $BUILD_DIR/runtime/bin/perl $BUILD_DIR/bin/app.pl &
