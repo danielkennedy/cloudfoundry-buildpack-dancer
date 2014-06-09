@@ -34,8 +34,6 @@ if [ ! -e $BUILD_DIR/local/bin/perl ]
 then
   cd $CACHE_DIR/perl-5.20.0
   ./Configure -des -Dprefix=$BUILD_DIR/local
-  make
-  make test
   make install
 fi
 
