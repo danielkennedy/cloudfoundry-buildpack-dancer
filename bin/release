@@ -3,7 +3,7 @@
 cat << EOF
 addons:
 config_vars:
-  PATH: local/bin:/usr/local/bin:/usr/bin:/bin
+  PATH: runtime/bin:/usr/local/bin:/usr/bin:/bin
 default_process_types:
-  web: perl -Mlib=\$PWD/local/lib/perl5 bin/app.pl
+  web: perl -Mlib=\$PWD/runtime/lib/perl5 bin/app.pl
 EOF
