@@ -12,12 +12,12 @@ mkdir -p "$BUILD_DIR" "$CACHE_DIR"
 # Files
 which curl || apt-get install curl
 
-export PERL5LIB="$BUILD_DIR/runtime/lib/perl5"
+export PERL5LIB="$BUILD_DIR/local/lib/perl5"
 export PERL_CPANM_OPT="--quiet --notest -l $BUILD_DIR/local"
 
 TARBALL=$CACHE_DIR/perl-5.20.0.selfcontained.tar.gz
 DOWNLOAD=https://s3.amazonaws.com/af-uploads/buildpacks/perl-5.20.0.selfcontained.tar.gz
-PERL=$BUILD_DIR/runtime/bin/perl
+PERL=$BUILD_DIR/local/bin/perl
 
 echo "BUILD_DIR $BUILD_DIR"
 echo "CACHE_DIR $CACHE_DIR"
@@ -33,7 +33,8 @@ fi
 if [ ! -x $PERL ]
 then
   which tar || apt-get install tar
-  mkdir -p $BUILD_DIR/runtime
-  tar -xvzf $TARBALL -C $BUILD_DIR/runtime
+  mkdir -p $BUILD_DIR/local
+  tar -xvzf $TARBALL -C $BUILD_DIR/local
 fi
 
+echo "PREBUILT"
