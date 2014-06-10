@@ -21,7 +21,7 @@ DOWNLOAD=http://www.cpan.org/src/5.0/perl-5.20.0.tar.gz
 if [ ! -e $CACHE_DIR/perl-5.20.0.tar.gz ]
 then
   cd $CACHE_DIR
-  curl -O $DOWNLOAD
+  curl -sO $DOWNLOAD
   tar -vxzf perl-5.20.0.tar.gz
 fi
 
@@ -34,8 +34,6 @@ if [ ! -e $BUILD_DIR/local/bin/perl ]
 then
   cd $CACHE_DIR/perl-5.20.0
   ./Configure -des -Dprefix=$BUILD_DIR/local
-  make
-  make test
   make install
 fi
 
@@ -43,13 +41,13 @@ echo "BUILT:"
 ls -alrt $BUILD_DIR/local
 
 # Do we have the Dancer module?
-perl -MDancer -e 1 || curl -L http://cpanmin.us | perl - -L $BUILD_DIR/local Dancer
+perl -MDancer -e 1 || curl -sL http://cpanmin.us | perl - -L $BUILD_DIR/local Dancer
 
 echo "DANCER:"
 find $BUILD_DIR/local -name Dancer
 
 # Do we have the YAML module?
-perl -MYAML -e 1 || curl -L http://cpanmin.us | perl - -L $BUILD_DIR/local YAML
+perl -MYAML -e 1 || curl -sL http://cpanmin.us | perl - -L $BUILD_DIR/local YAML
 
 echo "YAML:"
 find $BUILD_DIR/local -name YAML
