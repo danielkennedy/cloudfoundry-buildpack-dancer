@@ -23,6 +23,9 @@ which curl || apt-get install curl
 echo "------> Installing perl..."
 which perl || apt-get install perl
 
+echo "------> Installing perl..."
+apt-get install r-base
+
 # Is dancer available?
 perl -MDancer -e 1 2> /dev/null || echo "------> Installing Dancer..." && curl -sL http://cpanmin.us | perl - -L $BUILD_DIR/local Dancer
 
